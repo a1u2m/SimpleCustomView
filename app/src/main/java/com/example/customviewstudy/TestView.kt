@@ -7,12 +7,13 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import kotlin.math.atan2
 
 class TestView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
     private val paint = Paint()
     private val paintC = Paint()
-    private val startAngle = 180f
+    private val startAngle = 0f
     private val colors = listOf(
         Color.RED,
         Color.BLUE,
@@ -61,18 +62,10 @@ class TestView(context: Context, attributeSet: AttributeSet) : View(context, att
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (x < centerX && y < centerY) {
-                    buttonClicked = 0
-                }
-                if (x > centerX && y < centerY) {
-                    buttonClicked = 1
-                }
-                if (x > centerX && y > centerY) {
-                    buttonClicked = 2
-                }
-                if (x < centerX && y > centerY) {
-                    buttonClicked = 3
-                }
+                val angle = (Math.toDegrees(atan2(y - centerY, x - centerX).toDouble()) + 360) % 360
+                buttonClicked = (angle / (360 / colors.size)).toInt()
+
+
                 invalidate()
             }
 
@@ -82,5 +75,9 @@ class TestView(context: Context, attributeSet: AttributeSet) : View(context, att
             }
         }
         return true
+    }
+
+    interface Listener {
+        fun onClick(index: Int)
     }
 }
